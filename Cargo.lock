@@ -120,7 +120,7 @@ checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
 
 [[package]]
 name = "cot-proto"
-version = "0.3.2"
+version = "0.3.5"
 dependencies = [
  "chrono",
  "quick-xml",
@@ -133,6 +133,7 @@ dependencies = [
 name = "cot-send-example"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "clap",
  "cot-proto",
  "quick-xml",

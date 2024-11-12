@@ -2,6 +2,7 @@
 //! Goal is to put a dot on the map for a TAK/ATAK receiver,
 //! using a simple UDP sender.
 
+use chrono::{Duration, Utc};
 use clap::Parser;
 use cot_proto::base::Cot;
 use cot_proto::tak::create::DEFAULT_COT_TYPE_MARKER;
@@ -27,6 +28,10 @@ struct Command {
     le: f32,
     #[arg(short = 't', long, default_value = DEFAULT_COT_TYPE_MARKER)]
     cot_type: String,
+    #[arg(long, default_value_t = 60)]
+    ttl_secs: u32,
+    #[arg(short, long, default_value="cot-send-example")]
+    uid: String,
 }
 
 fn main() -> std::io::Result<()> {
@@ -36,11 +41,13 @@ fn main() -> std::io::Result<()> {
 
     let mut cot: Cot<TakMarkerDetail> = Default::default();
     cot.detail.contact.callsign = args.callsign;
+    cot.uid = args.uid;
     cot.point.lat = args.lat;
     cot.point.lon = args.lon;
     cot.point.hae = args.hae;
     cot.point.ce = args.ce;
     cot.point.le = args.le;
+    cot.stale = Utc::now() + Duration::seconds(args.ttl_secs as i64);
 
     let text = quick_xml::se::to_string(&cot).unwrap();
     udp.send_to(text.as_bytes(), dest.clone())?;
